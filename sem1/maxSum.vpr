@@ -1,0 +1,27 @@
+method maxSum(x: Int, y: Int) returns (sum: Int, max: Int)
+  ensures sum == x + y
+  ensures (x > y) ==> max == x
+  ensures (x <= y) ==> max == y
+{
+  sum := x + y
+  
+  if (x > y)
+  {
+    max := x
+  }
+  else
+  {
+    max := y
+  }
+}
+
+
+method testMaxSum() {
+  var s: Int
+  var m: Int
+  
+  s, m := maxSum(1723, 42)
+  
+  assert s == 1765
+  assert m == 1723
+}

@@ -1,0 +1,20 @@
+method d(x: Int) returns (y: Int)
+    requires x <= 3 || x >= 17
+    ensures y % 2 == 0
+{
+  if(x < 17)
+  {
+    if(x > 3)
+    {
+        y := 1
+    }
+    else
+    {
+        y := 2
+    }
+  }
+  else
+  {
+    y := 6
+  }
+}

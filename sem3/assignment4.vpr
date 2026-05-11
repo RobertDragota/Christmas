@@ -1,0 +1,116 @@
+method sum(n: Int) returns (r: Int)
+  requires 0 <= n
+  ensures 2 * r == n * (n + 1)
+  decreases n
+{
+  if (n == 0) {
+    r := 0
+  } else {
+    var s: Int
+    s := sum(n - 1)
+    r := s + n
+  }
+}
+
+method sum_client() {
+  var r: Int
+  r := sum(10)
+  assert r == 55
+}
+
+method M(n: Int) returns (r: Int)
+  requires n >= 0
+  ensures 100 < n ==> r == n - 10
+  ensures n <= 100 ==> r == 91
+  decreases n <= 100 ? 101 - n : 0
+{
+  if (n > 100) {
+    r := n - 10
+  } else {
+    r := M(n + 11)
+    r := M(r)
+  }
+}
+
+domain Tree {
+  function leaf(v: Int): Tree
+  function node(left: Tree, right: Tree): Tree
+
+  function size(t: Tree): Int
+  function sum_tree(t: Tree): Int
+
+  axiom size_leaf {
+    forall v: Int :: { leaf(v) } size(leaf(v)) == 1
+  }
+
+  axiom size_node {
+    forall l: Tree, r: Tree ::
+      { node(l, r) } size(node(l, r)) == size(l) + size(r)
+  }
+
+  axiom sum_leaf {
+    forall v: Int :: { leaf(v) } sum_tree(leaf(v)) == v
+  }
+
+  axiom sum_node {
+    forall l: Tree, r: Tree ::
+      { node(l, r) } sum_tree(node(l, r)) == sum_tree(l) + sum_tree(r)
+  }
+
+  axiom size_non_negative {
+    forall t: Tree :: { size(t) } size(t) >= 0
+  }
+}
+
+method tree_client_sum_and_size() {
+  var t: Tree
+  t := node(
+    node(
+      leaf(3),
+      leaf(17)
+    ),
+    leaf(22)
+  )
+
+  assert sum_tree(t) == 42
+  assert size(t) == 3
+}
+
+method tree_client_size_non_negative() {
+  var t: Tree
+  t := node(node(leaf(3), leaf(17)), leaf(22))
+  assert size(t) >= 0
+}
+
+function fib(n: Int): Int
+  requires 0 <= n
+  ensures 0 <= result
+  ensures n == 0 ==> result == 0
+  ensures n == 1 ==> result == 1
+  ensures 2 <= n ==> result == fib(n - 1) + fib(n - 2)
+  decreases n
+{
+  n == 0 ? 0 : (n == 1 ? 1 : fib(n - 1) + fib(n - 2))
+}
+
+method iter_fib(n: Int) returns (res: Int)
+  requires 0 <= n
+  ensures res == fib(n)
+{
+  res := 0
+  var i: Int := 0
+  var next: Int := 1
+
+  while (i < n)
+    invariant 0 <= i
+    invariant i <= n
+    invariant res == fib(i)
+    invariant next == fib(i + 1)
+  {
+    var t: Int := res
+    res := next
+    next := t + next
+    assert fib(i + 2) == fib(i + 1) + fib(i)
+    i := i + 1
+  }
+}

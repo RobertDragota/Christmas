@@ -1,0 +1,6 @@
+method a(x: Int, y: Int) returns (z: Int)
+  requires 0 <= x && x <= y && y < 100
+  ensures z == y - x
+{
+  z := y - x
+}

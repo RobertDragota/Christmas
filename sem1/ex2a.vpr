@@ -1,0 +1,12 @@
+method a(x: Int, y: Int) returns (X: Int, Y: Int)
+    requires true
+    ensures X == y && Y == x
+{
+    X := y - x
+    Y := y - X
+    X := Y + X
+}
+
+
+
+

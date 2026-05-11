@@ -1,0 +1,17 @@
+method d()
+{
+    var x: Int
+    var y: Bool
+    assume x > 0
+    x := x + 1
+    if(y)
+    {
+        var z: Int
+        x := x + z
+    }
+    else
+    { 
+        x := 42
+    }
+    assert !y ==> x == 42
+}

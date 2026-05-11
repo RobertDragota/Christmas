@@ -1,0 +1,7 @@
+method b()
+{
+  var x: Int
+  assume 0 <= x && x < 100
+  x := 2 * x
+  assert 0 <= x && x < 200 && x % 2 == 0
+}

@@ -1,0 +1,18 @@
+method reconstructMaxSum(sum: Int, max: Int) returns (x: Int, y: Int)
+  requires max >= sum - max 
+
+  ensures x + y == sum
+  ensures (x > y) ==> max == x
+  ensures (x <= y) ==> max == y
+{
+  x := max
+  y := sum - max
+}
+
+method testReconstructClient() {
+  var reconstructedX: Int
+  var reconstructedY: Int
+  reconstructedX, reconstructedY := reconstructMaxSum(100, 70)
+  assert reconstructedX + reconstructedY == 100
+  assert reconstructedX == 70 || reconstructedY == 70
+}

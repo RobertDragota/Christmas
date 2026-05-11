@@ -1,0 +1,72 @@
+method int_sqrt() {
+  var n: Int
+  assume n >= 0
+
+  var res: Int
+  res := 0
+  while ((res + 1) * (res + 1) < n)
+    invariant res * res <= n
+  {
+    res := res + 1
+  }
+  assert res * res <= n && n <= (res + 1) * (res + 1)
+}
+
+method int_sqrt_fast() {
+  var n: Int
+  assume n >= 0
+
+  var res: Int
+  res := 0
+  var x: Int := 1
+  while (x < n)
+    invariant res * res <= n
+    invariant x == (res + 1) * (res + 1)
+  {
+    x := x + 2 * res + 3
+    res := res + 1
+  }
+  assert res * res <= n && n <= (res + 1) * (res + 1)
+}
+
+method square(n: Int) returns (res: Int)
+  requires n >= 0
+  ensures res == n * n
+{
+  res := 0
+  var i: Int
+  i := 0
+
+  while (i < n)
+    invariant 0 <= i
+    invariant i <= n
+    invariant res == i * i
+  {
+    var k: Int
+    k := 0
+
+    while (k < i)
+      invariant 0 <= k
+      invariant k <= i
+      invariant res == i * i + k
+    {
+      res := res + 1
+      k := k + 1
+    }
+
+    k := 0
+    while (k < i)
+      invariant 0 <= k
+      invariant k <= i
+      invariant res == i * i + i + k
+    {
+      res := res + 1
+      k := k + 1
+    }
+
+    assert res == i * i + 2 * i
+    res := res + 1
+    assert res == (i + 1) * (i + 1)
+    i := i + 1
+  }
+}

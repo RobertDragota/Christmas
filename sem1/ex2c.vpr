@@ -1,0 +1,15 @@
+method c()
+{
+    var x: Int
+    var y: Int
+    assume (y > 5 ==> x > 7) && (y <= 5 ==> y - x > 7)
+    if(y > 5)
+    {
+        y := x - y
+    }
+    else
+    {
+        x := y - x
+    }
+    assert x > 7
+}
