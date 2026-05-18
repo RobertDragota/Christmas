@@ -1,13 +1,38 @@
-// my very own multiplication function 
 function X(n: Int, m: Int): Int 
   requires n >= 0 && m >= 0
 {
   m == 0 ? 0 : n + X(n, m-1)
 }
 
+method lemma_X_zero_left(n: Int)
+  requires n >= 0
+  ensures X(0, n) == 0
+  decreases n
+{
+  if (n != 0) {
+    lemma_X_zero_left(n - 1)
+  }
+}
+
+method lemma_X_succ_left(n: Int, m: Int)
+  requires n >= 0 && m >= 0
+  ensures X(n + 1, m) == X(n, m) + m
+  decreases m
+{
+  if (m != 0) {
+    lemma_X_succ_left(n, m - 1)
+  }
+}
+
 method lemma_X_commutative(n: Int, m: Int)
   requires n >= 0 && m >= 0
   ensures X(n, m) == X(m, n)
+  decreases m
 {
-  // TODO: write a proof
+  if (m == 0) {
+    lemma_X_zero_left(n)
+  } else {
+    lemma_X_commutative(n, m - 1)
+    lemma_X_succ_left(m - 1, n)
+  }
 }

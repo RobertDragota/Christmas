@@ -1,6 +1,17 @@
 field next: Ref
 field elem: Int
 
+predicate sorted(this: Ref, lower: Int) {
+  this != null ==>
+    acc(this.elem) &&
+    acc(this.next) &&
+    lower <= this.elem &&
+    sorted(this.next, this.elem)
+}
 
-predicate list(this: Ref)
-
+predicate list(this: Ref) {
+  this != null ==>
+    acc(this.elem) &&
+    acc(this.next) &&
+    sorted(this.next, this.elem)
+}

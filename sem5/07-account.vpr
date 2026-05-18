@@ -1,5 +1,30 @@
 field bal: Int
 
+method create() returns (res: Ref)
+  ensures res != null
+  ensures acc(res.bal) && res.bal == 0
+{
+  res := new(bal)
+  res.bal := 0
+}
+
+method deposit(a: Ref, amount: Int)
+  requires a != null && acc(a.bal) && amount >= 0
+  ensures  acc(a.bal) && a.bal == old(a.bal) + amount
+{
+  a.bal := a.bal + amount
+}
+
+method transfer(a: Ref, b: Ref, amount: Int)
+  requires a != null && b != null && a != b
+  requires acc(a.bal) && acc(b.bal) && amount >= 0 && amount <= a.bal
+  ensures  acc(a.bal) && acc(b.bal)
+  ensures  a.bal == old(a.bal) - amount
+  ensures  b.bal == old(b.bal) + amount
+{
+  a.bal := a.bal - amount
+  b.bal := b.bal + amount
+}
 
 method client()
 {
@@ -9,12 +34,17 @@ method client()
   x := create()
   y := create()
   z := create()
+  assert x != y
+  assert x != z
+  assert y != z
   deposit(x, 100)
+  assert x.bal == 100
   deposit(y, 200)
+  assert y.bal == 200
   deposit(z, 300)
+  assert z.bal == 300
   transfer(x, y, 100)
   assert x.bal == 0
   assert y.bal == 300
   assert z.bal == 300
 }
-

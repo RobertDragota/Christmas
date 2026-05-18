@@ -1,6 +1,18 @@
 function foo(x: Int): Int
+  ensures result > 0
+  decreases x > 0 ? x : 0
 { 
   x <= 0 ? 1 : foo(x - 2) + 3 
+}
+
+method lemma_foo_growth(x: Int)
+  requires x > 0
+  ensures  foo(x) >= x + 2
+  decreases x
+{
+  if (x > 2) {
+    lemma_foo_growth(x - 2)
+  }
 }
 
 method client(r: Int)
@@ -8,5 +20,11 @@ method client(r: Int)
   var s: Int := foo(r)
   var t: Int := foo(s)
 
-  assert 2 <= t - s // should verify
+  lemma_foo_growth(s)
+
+  if (r > 0) {
+    lemma_foo_growth(r)
+  }
+
+  assert 2 <= t - r
 }

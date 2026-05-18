@@ -1,15 +1,73 @@
 field f: Int
 
 method swap(a: Ref, b: Ref)
+  requires a != null && b != null
+  requires a == b ==> acc(a.f)
+  requires a != b ==> acc(a.f) && acc(b.f)
+  ensures a == b ==> acc(a.f) && a.f == old(a.f)
+  ensures a != b ==> acc(a.f) && acc(b.f)
+  ensures a != b ==> a.f == old(b.f) && b.f == old(a.f)
 {
+  if (a != b) {
+    var tmp: Int := a.f
+    a.f := b.f
+    b.f := tmp
+  }
 }
 
 method client1()
 {
-
+  var x: Ref
+  var y: Ref
+  x := new(f)
+  y := new(f)
+  x.f := 1
+  y.f := 2
+  swap(x, y)
+  assert x.f == 2
+  assert y.f == 1
 }
 
 method client2()
 {
+  var x: Ref
+  x := new(f)
+  x.f := 1
+  swap(x, x)
+  assert x.f == 1
+}
 
+method alias(a: Ref, b: Ref)
+  requires a != null && b != null
+  requires a == b ==> acc(a.f)
+  requires a != b ==> acc(a.f) && acc(b.f)
+  ensures a == b ==> acc(a.f) && a.f == 7
+  ensures a != b ==> acc(a.f) && acc(b.f) && a.f == 5 && b.f == 7
+{
+  a.f := 5
+  b.f := 7
+}
+
+method alias_client_distinct()
+{
+  var x: Ref
+  var y: Ref
+
+  x := new(f)
+  y := new(f)
+
+  alias(x, y)
+
+  assert x.f == 5
+  assert y.f == 7
+}
+
+method alias_client_same()
+{
+  var x: Ref
+
+  x := new(f)
+  alias(x, x)
+
+  assert x.f == 7
 }

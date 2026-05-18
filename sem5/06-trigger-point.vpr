@@ -11,8 +11,11 @@ domain Point {
 
    function add(p: Point, q: Point): Point 
 
+   // This trigger verifies the client below. Other useful experiments:
+   // { first(add(p,q)) } usually fails to trigger the second component,
+   // while triggers that recreate add terms can make matching loop.
    axiom add_points { 
-      forall p: Point, q: Point :: { add(add(p,q),add(p,q)) } // TODO: try out other triggering patterns here 
+      forall p: Point, q: Point :: { add(p,q) }  
          first(add(p,q)) == first(p) + first(q) 
          && second(add(p,q)) == second(p) + second(q)
    }

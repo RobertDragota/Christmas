@@ -4,8 +4,50 @@ field val: Int
 // Factory
 field cache: Ref
 
-predicate factory(this: Ref)
+predicate factory(this: Ref) {
+  acc(this.cache) &&
+  (this.cache != null ==> acc(this.cache.val, 1/2))
+}
+
+method create_factory() returns (res: Ref)
+  ensures factory(res)
+  ensures unfolding factory(res) in res.cache == null
+{
+  res := new(cache)
+  res.cache := null
+  fold factory(res)
+}
 
 method get(this: Ref) returns (fly: Ref)
-    requires factory(this)
-    ensures  factory(this)
+  requires factory(this)
+  ensures  factory(this)
+  ensures  fly != null
+  ensures  unfolding factory(this) in this.cache == fly
+  ensures  old(unfolding factory(this) in this.cache) != null ==>
+             unfolding factory(this) in this.cache == old(unfolding factory(this) in this.cache)
+{
+  unfold factory(this)
+
+  if (this.cache == null) {
+    fly := new(val)
+    fly.val := 0
+    this.cache := fly
+  } else {
+    fly := this.cache
+  }
+
+  fold factory(this)
+}
+
+method client()
+{
+  var factoryRef: Ref
+  var fly1: Ref
+  var fly2: Ref
+
+  factoryRef := create_factory()
+  fly1 := get(factoryRef)
+  fly2 := get(factoryRef)
+
+  assert fly1 == fly2
+}
