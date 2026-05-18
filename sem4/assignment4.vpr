@@ -43,13 +43,13 @@ domain Tree {
     forall v: Int :: { leaf(v) } size(leaf(v)) == 1
   }
 
+  axiom sum_leaf {
+    forall v: Int :: { leaf(v) } sum_tree(leaf(v)) == v
+  }
+
   axiom size_node {
     forall l: Tree, r: Tree ::
       { node(l, r) } size(node(l, r)) == size(l) + size(r)
-  }
-
-  axiom sum_leaf {
-    forall v: Int :: { leaf(v) } sum_tree(leaf(v)) == v
   }
 
   axiom sum_node {
@@ -71,6 +71,7 @@ method tree_client_sum_and_size() {
     ),
     leaf(22)
   )
+
 
   assert sum_tree(t) == 42
   assert size(t) == 3

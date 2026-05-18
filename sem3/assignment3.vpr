@@ -23,8 +23,10 @@ method int_sqrt_fast() {
     invariant res * res <= n
     invariant x == (res + 1) * (res + 1)
   {
-    x := x + 2 * res + 3
+    
+    x := (res+ 1 +1)*(res+ 1+ 1) 
     res := res + 1
+    
   }
   assert res * res <= n && n <= (res + 1) * (res + 1)
 }
